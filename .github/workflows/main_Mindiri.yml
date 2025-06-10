@@ -38,13 +38,19 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-  
+
+    - name: Configure Container Registry
+      run: |
+        az containerapp registry set \
+          --name hackaton-mental-health \
+          --resource-group hackaton-dicoding \
+          --server mindiriacr.azurecr.io \
+          --username ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_D1147F36CB0F42859C2B39E2E156ED92 }} \
+          --password ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_A973FB42149B41AAB48048BD1F703215 }}
+
     - name: Deploy to Azure Container Apps
       run: |
         az containerapp update \
           --name hackaton-mental-health \
           --resource-group hackaton-dicoding \
-          --image mindiriacr.azurecr.io/mindiri-api:${{ github.sha }} \
-          --registry-server mindiriacr.azurecr.io \
-          --registry-username ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_D1147F36CB0F42859C2B39E2E156ED92 }} \
-          --registry-password ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_A973FB42149B41AAB48048BD1F703215 }}
+          --image mindiriacr.azurecr.io/mindiri-api:${{ github.sha }}
