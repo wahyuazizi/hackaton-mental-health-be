@@ -72,8 +72,11 @@ jobs:
           --password ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_A973FB42149B41AAB48048BD1F703215 }}
     
     - name: Deploy to Azure Container Apps
+      env:
+        IMAGE_TAG: mindiriacr.azurecr.io/mindiri-api:${{ github.sha }}
       run: |
+        echo "Deploying with image: $IMAGE_TAG"
         az containerapp update \
           --name hackaton-mental-health \
           --resource-group hackaton-dicoding \
-          --image ${{ needs.build.outputs.image-tag }}
+          --image $IMAGE_TAG
