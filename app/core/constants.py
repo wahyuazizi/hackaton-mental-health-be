@@ -141,8 +141,6 @@ CRISIS_KEYWORDS = [
 CRISIS_RESOURCES = [
     "🚨 Hotline Darurat: 119 (24 jam)",
     "🏥 Yayasan Pulih: (021) 78842580",
-    "💊 RSKO Jakarta: (021) 87711968", 
-    "🏥 RS Jiwa Dr. Soeharto Heerdjan: (021) 5682841",
     "💬 Sejiwa: 119 ext. 8",
     "🌐 Into The Light: intothelightid.org"
 ]
