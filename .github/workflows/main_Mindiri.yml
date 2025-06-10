@@ -1,13 +1,11 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 name: Build and deploy container app to Azure Container Apps - Mindiri
-
 on:
   push:
     branches:
       - main
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: 'ubuntu-latest'
@@ -38,7 +36,6 @@ jobs:
     
     - name: Set image tag output
       run: echo "image-tag=mindiriacr.azurecr.io/mindiri-api:${{ github.sha }}" >> $GITHUB_OUTPUT
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -80,3 +77,30 @@ jobs:
           --name hackaton-mental-health \
           --resource-group hackaton-dicoding \
           --image $IMAGE_TAG
+    
+    - name: Configure Azure OpenAI Environment Variables
+      run: |
+        echo "Setting up Azure OpenAI environment variables..."
+        az containerapp update \
+          --name hackaton-mental-health \
+          --resource-group hackaton-dicoding \
+          --set-env-vars \
+            "AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }}" \
+            "AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }}" \
+            "AZURE_OPENAI_DEPLOYMENT_NAME=${{ secrets.AZURE_OPENAI_DEPLOYMENT_NAME }}" \
+            "AZURE_OPENAI_API_VERSION=${{ secrets.AZURE_OPENAI_API_VERSION }}" \
+            "NODE_ENV=production"
+    
+    - name: Verify deployment and environment variables
+      run: |
+        echo "Checking container app status..."
+        az containerapp show \
+          --name hackaton-mental-health \
+          --resource-group hackaton-dicoding \
+          --query "properties.latestRevisionName"
+        
+        echo "Environment variables configured:"
+        az containerapp show \
+          --name hackaton-mental-health \
+          --resource-group hackaton-dicoding \
+          --query "properties.template.containers[0].env[?name=='AZURE_OPENAI_ENDPOINT'].name"
