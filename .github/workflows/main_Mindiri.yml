@@ -38,14 +38,17 @@ jobs:
     needs: build
     environment:
       name: 'production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
     steps:
-    - name: Deploy to Azure Web App
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
+    - name: Login to Azure
+      uses: azure/login@v1
       with:
-        app-name: 'Mindiri'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_16244c95e9b54fa7897fe1cf8e9b1e9d }}
-        images: 'mindiriacr.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_d1147f36cb0f42859c2b39e2e156ed92 }}/mindiri-api:${{ github.sha }}'
+        client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_BB6A32372AFF4F1BBB6A8900EAEE2FC7 }}
+        tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6BE547929DB6446F9159A3D32E93DF5C }}
+        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A469D7416C714CF8A4CA21347294E20E }}
+  
+    - name: Deploy to Azure Container Apps
+      run: |
+        az containerapp update \
+          --name hackaton-mental-health \
+          --resource-group hackaton-dicoding \
+          --image mindiriacr.azurecr.io/mindiri-api:${{ github.sha }}
